@@ -11,7 +11,7 @@ const cleanFolder = (folderPath) => {
         });
       });
     });
-  };
+  }
 
   
   module.exports = cleanFolder;
