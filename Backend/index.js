@@ -4,15 +4,22 @@ const multer=require('multer');
 const path=require('path');
 const cors=require('cors');
 const axios=require('axios');
+const  cleanFolder=require('./utils/CleanUploadFolder');
+
 const CLOUDCONVERT_API_KEY='eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiZjg5MjljODI2NDYxZmQ5NTBlZTI3YjhkM2U1MWU3ODJjMmQzOGJmMzkxYmQxOWFkNDgwMWUwNzY1MGJhYWIzOTk2NmU5NGE0Y2QyMDM5OGEiLCJpYXQiOjE3NDAxMzM5ODcuOTc5MzQsIm5iZiI6MTc0MDEzMzk4Ny45NzkzNDEsImV4cCI6NDg5NTgwNzU4Ny45NzUyMzIsInN1YiI6IjY4MjI2MzUxIiwic2NvcGVzIjpbInVzZXIucmVhZCIsInVzZXIud3JpdGUiLCJ0YXNrLnJlYWQiLCJ0YXNrLndyaXRlIiwid2ViaG9vay5yZWFkIiwid2ViaG9vay53cml0ZSIsInByZXNldC5yZWFkIiwicHJlc2V0LndyaXRlIl19.r3hiNMwdi2TeE9dc2MIn-mDtwwEnRm1hpyRMjip9DHH_sD9YApcA-uP_FPaoDFfxc8jihFgp69e3Pl-DxVw_7ugqVU2_FdOsyF26ZL3ytb7jG28BuEBza3anESK-Qy_Y1MNtVvvtoFJ4OYz4QgDvPGKMpiLjpcRHWbOXnaVZa4csPx9NM6hp5SIjOH38434tWLlIuI9CSeHrcyCd1QxM4SQwveg2hEGZm43yw7EoOtjs4ea2OVwmUZh9DE0Dr2pUyHzANR-ARrKkbBYaBGspwKLAPAVrz6Cu3JW1eX1NpNR0HlcVrW2sgxCuaBx2KmW4NW8Zipd49Bqq1YtiCCpUR_xXxdm9Q01WN6tqcD60IQkDH9ueCkLHHe9UjHmFVz0fQ-73LMQ7LnSnsLrMPNsLKbRUsAl_kGGcPdjDJ8n84PyIrassi0qfHFQUDKQv3_OV7aC9UOYubgKxpueDQ0U02bBhBbA5LghRHIXUk3haiSU1DCTVgSsFa-VLKOu0oSlcQXPE9DXf0sd2TpIexPPlWmnJchL9_2PrU9v2uMX9osF2CEueB3HP_7NYQTHqA2vL2uxx5j_iFwPnWWIW8Uj-BkV0N9hPvwu8DaCgscvZ-U3b7xO4cREhCFTsxNyD_LL3NBNi7XcF7myrNF_1hoMoYBVBYwWbRkTQITffItlM_eo';
 app.use(cors());
 const port=3001;
 const fs = require('fs');
-const convertapi=require('convertapi')('secret_5Z39XjDfBOBCLh8d');
+require('dotenv').config();
+
+const convertapi = require('convertapi')(process.env.CONVERT_API_SECRET);
+
+
 const { Document, Packer, Paragraph, ImageRun } = require("docx");
-// const sharp=require('sharp');
-// const aw = require("@aspose/words");
+
 const FormData = require("form-data");
+
+
 
    
     const storage = multer.diskStorage({
@@ -24,6 +31,8 @@ const FormData = require("form-data");
       
 
       const uploads=multer({storage:storage});
+
+     
 
  app.post('/convertFile/docx-to-pdf', uploads.single('file'), async(req,res,next)=>{
         try{
@@ -38,13 +47,15 @@ const FormData = require("form-data");
 
         const result= await convertapi.convert('pdf', {File:docxfile}, 'docx');
          await result.saveFiles(outputfile);
-        // await result.saveFiles(outputfile);
+        
 
          res.download(outputfile,(err)=>{
             if(err){
                 console.log("error occurred",err);
             }
             console.log("file downloaded");
+            cleanFolder("uploads"); 
+            
          })
          
     }catch(err){
@@ -72,6 +83,7 @@ const FormData = require("form-data");
                 console.error("Error sending file:", err);
             } else {
                 console.log("File downloaded successfully");
+                cleanFolder("uploads");
             }
         });
 
@@ -101,6 +113,7 @@ app.post('/convertFile/docx-to-png', uploads.single("file"), async (req, res) =>
                 console.error("Error sending file:", err);
             } else {
                 console.log("File downloaded successfully");
+                cleanFolder("uploads");
             }
         });
 
@@ -130,6 +143,7 @@ app.post('/convertFile/docx-to-png', uploads.single("file"), async (req, res) =>
                 console.log("error occurred",err);
             }
             console.log("file downloaded");
+            cleanFolder("uploads");
          })
          
     }catch(err){
@@ -151,13 +165,14 @@ app.post('/convertFile/docx-to-png', uploads.single("file"), async (req, res) =>
 
         const result= await convertapi.convert('jpg', {File:pdfFile}, 'pdf');
          await result.saveFiles(outputfile);
-        // await result.saveFiles(outputfile);
+        
 
          res.download(outputfile,(err)=>{
             if(err){
                 console.log("error occurred",err);
             }
             console.log("file downloaded");
+            cleanFolder("uploads"); 
          })
          
     }catch(err){
@@ -179,13 +194,14 @@ app.post('/convertFile/docx-to-png', uploads.single("file"), async (req, res) =>
 
         const result= await convertapi.convert('png', {File:pdfFile}, 'pdf');
          await result.saveFiles(outputfile);
-        // await result.saveFiles(outputfile);
+       
 
          res.download(outputfile,(err)=>{
             if(err){
                 console.log("error occurred",err);
             }
             console.log("file downloaded");
+            cleanFolder("uploads"); 
          })
          
     }catch(err){
@@ -277,6 +293,7 @@ app.post('/convertFile/jpg-to-pdf', uploads.single('file'), async(req,res,next)=
                 console.log("error occurred",err);
             }
             console.log("file downloaded");
+            cleanFolder("uploads"); 
         })
     }catch(err){
         console.log("error occurred",err);
@@ -307,6 +324,7 @@ app.post('/convertFile/jpg-to-png', uploads.single('file'), async(req,res,next)=
             console.log("error occurred",err);
         }
         console.log("file downloaded");
+        cleanFolder("uploads"); 
     })
 }catch(err){
     console.log("error occurred",err);
@@ -388,6 +406,7 @@ app.post('/convertFile/png-to-pdf', uploads.single('file'), async(req,res,next)=
             console.log("error occurred",err);
         }
         console.log("file downloaded");
+        cleanFolder("uploads"); 
      })
      
 }catch(err){
@@ -415,6 +434,7 @@ app.post('/convertFile/png-to-jpg', uploads.single('file'), async(req,res,next)=
             console.log("error occurred",err);
         }
         console.log("file downloaded");
+        cleanFolder("uploads"); 
         fs.unlink(outputfile, (unlinkErr) => {
             if (unlinkErr) {
                 console.error("Error deleting file:", unlinkErr);
@@ -430,19 +450,6 @@ app.post('/convertFile/png-to-jpg', uploads.single('file'), async(req,res,next)=
 })
 
 
-    //how to use cleanupFiles function
-// cleanupFiles([jpgpath,outputDir]); // Call the function to cleanup files
-
-// 🛠️ Utility: Cleanup Temporary Files
-// const cleanupFiles = async (files) => {
-//     try {
-//         await Promise.all(files.map(file => fs.rm(file, { force: true })));
-//         console.log("Temporary files deleted.");
-//     } catch (err) {
-//         console.error("Error deleting temp files:", err);
-//     }
-// };
-
  app.listen(3001,()=>{
- console.log("Server is  listening on port 3001");
+ console.log(`Server is  listening on port ${port}`);
 });
