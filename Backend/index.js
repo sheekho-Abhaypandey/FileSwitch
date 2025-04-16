@@ -8,7 +8,7 @@ const CLOUDCONVERT_API_KEY='eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiw
 app.use(cors());
 const port=3001;
 const fs = require('fs');
-const convertapi=require('convertapi')('secret_FIZBnZH5myzbM3gB');
+const convertapi=require('convertapi')('secret_5Z39XjDfBOBCLh8d');
 const { Document, Packer, Paragraph, ImageRun } = require("docx");
 // const sharp=require('sharp');
 // const aw = require("@aspose/words");
@@ -352,9 +352,9 @@ app.post("/convertFile/png-to-docx", uploads.single("file"), async (req, res) =>
         });
 
         // Cleanup: Delete files **after response is sent**
-        res.on("finish",  async () => {
-            await fs.unlinkSync(pngPath);
-            await fs.unlinkSync(outputDocxPath);
+        res.on("finish",   () => {
+             fs.unlinkSync(pngPath);
+             fs.unlinkSync(outputDocxPath);
             console.log("Temporary files deleted.");
         });
 
@@ -419,7 +419,7 @@ app.post('/convertFile/png-to-jpg', uploads.single('file'), async(req,res,next)=
             if (unlinkErr) {
                 console.error("Error deleting file:", unlinkErr);
             } else {
-                console.log("File deleted after download");
+                // console.log("File deleted after download");
             }
      })
      
