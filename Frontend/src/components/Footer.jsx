@@ -3,8 +3,8 @@ import React from "react";
 function Footer() {
   return (
     <>
-      <div className="item-center justify-center border-b-2 bg-black">
-        <hr className=" border-black" />
+      <div className="items-center justify-center border-t-1 text-black border-black dark:border-white bg-white dark:text-white dark:bg-gray-900">
+        {/* <hr className=" border-black" /> */}
         <h1 className="text-center py-3 text-sm">
           Copyright © 2024 - All right reserved by ACME Industries Ltd
         </h1>
