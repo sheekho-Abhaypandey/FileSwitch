@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+
 import {
   FaFileWord,
   FaFilePdf,
@@ -27,6 +28,7 @@ function Home() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  
   
   // Conversion state
   const [isConverted, setIsConverted] = useState(false);
@@ -206,23 +208,23 @@ function Home() {
                   </label>
 
                   <select
-                    className="w-full py-2 border-2 border-gray-300 rounded-lg px-2"
+                    className="w-full py-2 border-2 border-gray-300 rounded-lg px-2 dark:bg-gray-700 dark:text-white cursor-pointer"
                     value={conversionFormat}
                     onChange={handleConvertFormat}
                   >
-                    <option value="" disabled>
+                    <option className="cursor-pointer" value="" disabled>
                       Select output format
                     </option>
-                    <option value="docx" disabled={selectedFile?.name?.split('.').pop().toLowerCase() === "docx"}>
+                    <option className="cursor-pointer"  value="docx" disabled={selectedFile?.name?.split('.').pop().toLowerCase() === "docx"}>
                       DOCX
                     </option>
-                    <option value="pdf" disabled={selectedFile?.name?.split('.').pop().toLowerCase() === "pdf"}>
+                    <option className="cursor-pointer"  value="pdf" disabled={selectedFile?.name?.split('.').pop().toLowerCase() === "pdf"}>
                       PDF
                     </option>
-                    <option value="jpg" disabled={selectedFile?.name?.split('.').pop().toLowerCase() === "jpg"}>
+                    <option className="cursor-pointer"  value="jpg" disabled={selectedFile?.name?.split('.').pop().toLowerCase() === "jpg"}>
                       JPG
                     </option>
-                    <option value="png" disabled={selectedFile?.name?.split('.').pop().toLowerCase() === "png"}>
+                    <option className="cursor-pointer"  value="png" disabled={selectedFile?.name?.split('.').pop().toLowerCase() === "png"}>
                       PNG
                     </option>
                   </select>
@@ -230,12 +232,13 @@ function Home() {
                   <button
                     onClick={handleConversion}
                     disabled={!selectedFile || !conversionFormat || loading}
-                    className="w-full flex items-center justify-center text-white bg-blue-500 hover:bg-blue-700 disabled:bg-gray-400 disabled:pointer-events-none duration-300 font-bold px-4 py-2 rounded-lg"
+                    className="w-full flex items-center justify-center text-white bg-blue-500 hover:bg-blue-700 disabled:bg-gray-400 disabled:pointer-events-none duration-300 font-bold px-4 py-2 rounded-lg cursor-pointer"
                   >
                     {loading ? (
                       <>
                         <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
                         Converting...
+                        
                       </>
                     ) : (
                       "Convert File"
@@ -243,7 +246,7 @@ function Home() {
                   </button>
                 </>
               ) : (
-                <div className="w-full">
+                <div className="w-full dark:bg-gray-800 dark:text-white">
                   <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
                     <div className="flex items-center mb-2">
                       {defaultFileIcon({ name: `file.${conversionFormat}` })}
@@ -256,16 +259,16 @@ function Home() {
                     <div className="flex gap-3">
                       <button
                         onClick={handleDownload}
-                        className="flex-1 flex items-center justify-center text-white bg-green-500 hover:bg-green-700 font-bold px-4 py-2 rounded-lg"
+                        className="flex-1 flex items-center justify-center text-white bg-green-500 hover:bg-green-700 font-bold px-4 py-2 rounded-lg cursor-pointer"
                       >
-                        <FaDownload className="mr-2" /> Download
+                        <FaDownload className="mr-2 " /> Download
                       </button>
                       
                       <button
                         onClick={resetAll}
-                        className="flex items-center justify-center text-indigo-600 bg-white border border-indigo-600 hover:bg-indigo-50 font-bold px-4 py-2 rounded-lg"
+                        className="flex items-center justify-center cursor-pointer text-indigo-600 bg-white border border-indigo-600 hover:bg-indigo-50 font-bold px-4 py-2 rounded-lg"
                       >
-                        <FaRedo className="mr-2" /> New Conversion
+                        <FaRedo className="mr-2 " /> New Conversion
                       </button>
                     </div>
                   </div>
