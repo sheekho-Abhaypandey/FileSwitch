@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 
+
 import {
   FaFileWord,
   FaFilePdf,
@@ -11,6 +12,8 @@ import {
   FaRedo
 } from "react-icons/fa";
 import axios from "axios";
+axios.defaults.baseURL = "https://fileswitch-5.onrender.com";
+
 
 const fileIcon = {
   docx: <FaFileWord className="text-3xl mr-3 text-blue-600" />,
@@ -85,6 +88,7 @@ function Home() {
     try {
       const formData = new FormData();
       formData.append("file", selectedFile);
+      
 
       const response = await axios.post(
         `/convertFile/${conversionPath}`,
