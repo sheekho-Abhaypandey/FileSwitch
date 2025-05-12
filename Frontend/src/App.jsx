@@ -23,9 +23,9 @@ function App() {
     <ThemeProvider value={{ themeMode, lightTheme, darkTheme }}>
       <Navbar setPage={setPage} />
       
-      {page === "home" && <Home />};
-      {page === "contact" && <Contact />};
-      {page === "about" && <About />};
+      {page === "home" && <Home />}
+      {page === "contact" && <Contact />}
+      {page === "about" && <About />}
 
       <Footer />
     </ThemeProvider>
