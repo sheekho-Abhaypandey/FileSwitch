@@ -343,57 +343,115 @@ app.post('/convertFile/jpg-to-png', uploads.single('file'), async(req,res,next)=
 }
 });
 
+// app.post("/convertFile/png-to-docx", uploads.single("file"), async (req, res) => {
+//     try {
+//         if (!req.file) {
+//             return res.status(400).json({ message: "No file uploaded" });
+//         }
+
+//         const pngPath = req.file.path; // Path to uploaded PNG
+//         const outputDir = path.join(__dirname, "converted");
+
+//         if (!fs.existsSync(outputDir)) {
+//             fs.mkdirSync(outputDir);
+//         }
+//         //   const { name } = path.parse(pngPath);  // finding name using destructuring the 'path' object
+//          const name=path.parse(pngPath).name;  // finding name by extracting name from path object 
+//         const outputDocxPath = path.join(outputDir, `${name}.docx`);
+       
+
+//         // Read the image into a buffer
+//         const imageBuffer = fs.readFileSync(pngPath);
+
+//         // Create a new Aspose.Words Document
+//         const doc = new aw.Document();
+//         const builder = new aw.DocumentBuilder(doc);
+
+//         // 🔹 Fix: Insert image **directly** from buffer (No Base64 conversion needed)
+//         builder.insertImage(imageBuffer);
+
+//         // Save the document as DOCX
+//         await doc.save(outputDocxPath);
+
+//         // Send the converted file as a response
+//         res.download(outputDocxPath, "converted.docx", (err) => {
+//             if (err) console.error("Error sending file:", err);
+//         });
+
+//         // Cleanup: Delete files **after response is sent**
+//         res.on("finish",   () => {
+//              fs.unlinkSync(pngPath);
+//              fs.unlinkSync(outputDocxPath);
+//             console.log("Temporary files deleted.");
+//         });
+
+
+//         // await cleanupFiles([pngPath, outputDocxPath]); //  Another way Cleanup temp files
+
+//     } catch (error) {
+//         console.error("Error converting PNG to DOCX:", error);
+//         res.status(500).json({ error: "Internal Server Error" });
+//     }
+// });
+
+
 app.post("/convertFile/png-to-docx", uploads.single("file"), async (req, res) => {
     try {
         if (!req.file) {
-            return res.status(400).json({ message: "No file uploaded" });
+            return res.status(400).json({ error: "No image uploaded" });
         }
 
-        const pngPath = req.file.path; // Path to uploaded PNG
-        const outputDir = path.join(__dirname, "converted");
-
-        if (!fs.existsSync(outputDir)) {
-            fs.mkdirSync(outputDir);
-        }
-        //   const { name } = path.parse(pngPath);  // finding name using destructuring the 'path' object
-         const name=path.parse(pngPath).name;  // finding name by extracting name from path object 
-        const outputDocxPath = path.join(outputDir, `${name}.docx`);
-       
-
-        // Read the image into a buffer
-        const imageBuffer = fs.readFileSync(pngPath);
-
-        // Create a new Aspose.Words Document
-        const doc = new aw.Document();
-        const builder = new aw.DocumentBuilder(doc);
-
-        // 🔹 Fix: Insert image **directly** from buffer (No Base64 conversion needed)
-        builder.insertImage(imageBuffer);
-
-        // Save the document as DOCX
-        await doc.save(outputDocxPath);
-
-        // Send the converted file as a response
-        res.download(outputDocxPath, "converted.docx", (err) => {
-            if (err) console.error("Error sending file:", err);
+        const imagePath = req.file.path;
+        console.log("Received PNG:", imagePath);
+        
+        // Read the image as buffer
+        const imageBuffer = fs.readFileSync(imagePath);
+        
+        // Create a DOCX document with the image
+        const doc = new Document({
+            sections: [{
+                children: [
+                    new Paragraph({
+                        children: [
+                            new ImageRun({
+                                data: imageBuffer,
+                                transformation: { 
+                                    width: 600,  // Set your desired width
+                                    height: 450  // Set your desired height or use proportion calculation
+                                },
+                                type: "png",
+                            }),
+                        ],
+                    }),
+                ],
+            }],
         });
 
-        // Cleanup: Delete files **after response is sent**
-        res.on("finish",   () => {
-             fs.unlinkSync(pngPath);
-             fs.unlinkSync(outputDocxPath);
-            console.log("Temporary files deleted.");
+        // Generate DOCX as a buffer
+        const buffer = await Packer.toBuffer(doc);
+
+        // Set filename based on original file
+        const { name } = path.parse(req.file.path);
+        const filename = `${name}.docx`;
+
+        // Set response headers for file download
+        res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+        res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+
+        // Send DOCX file as response
+        res.send(buffer);
+
+        // Clean up uploaded file when response is finished
+        res.on("finish", () => {
+            fs.unlinkSync(imagePath);
+            console.log("Temporary files deleted");
         });
-
-
-        // await cleanupFiles([pngPath, outputDocxPath]); //  Another way Cleanup temp files
 
     } catch (error) {
-        console.error("Error converting PNG to DOCX:", error);
-        res.status(500).json({ error: "Internal Server Error" });
+        console.error("Error:", error);
+        res.status(500).json({ error: "Internal server error", details: error.message });
     }
 });
-
 
 
 
