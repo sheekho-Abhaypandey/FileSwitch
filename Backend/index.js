@@ -5,16 +5,15 @@ const path=require('path');
 const cors=require('cors');
 const axios=require('axios');
 const  cleanFolder=require('./utils/CleanUploadFolder');
-const archiver = require('archiver');
-const CloudConvert =require('cloudconvert');
 
 const router = express.Router();
-const cloudConvert = new CloudConvert('eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiZjQ2NzI2MjQwOGQ1NThjNDI5OWVjZjZmM2NkYzIzM2FhOTMxNjlmNWZhYmM5OTY5NmEwMzA0NWFkNTUzOWNkNDJhZjM2NTdhOGJkZGVhZDgiLCJpYXQiOjE3NDY5NDY1MjUuNTE5ODA5LCJuYmYiOjE3NDY5NDY1MjUuNTE5ODEyLCJleHAiOjQ5MDI2MjAxMjUuNTE2MDc2LCJzdWIiOiI2ODIyNjM1MSIsInNjb3BlcyI6WyJ1c2VyLnJlYWQiLCJ1c2VyLndyaXRlIiwidGFzay5yZWFkIiwidGFzay53cml0ZSIsIndlYmhvb2sucmVhZCIsIndlYmhvb2sud3JpdGUiLCJwcmVzZXQucmVhZCIsInByZXNldC53cml0ZSJdfQ.pQYXRy7-5Nl_qZ_CnKyAMupdvCLoRyIzv8QQHcq-8nUXXxUXXDrXkaO-bj-1WKmYzLrFTb7TR6oVHBBt57cGdZJ0MplYgptzu116MFMQYmMrfSyNYibKHGWTKRHndBaOP3ag7fs_au5vQtZJLcnzixN2fDHPGCMq8lIeX-0iPDabhEqrx2JioUPORAdYLYaFTdIhCU2aWjznjTisUeB0rFGfNZzJKM92nWuFeHu61oYifPDZUxrLPeDqpO7URncuC_9uZfD-BrmIsirvKYdPg-htKaPDc0h5F1_6e7L1FhCRxlgJ0pl3EVk0s2vgDDgjLIo_VeD7mduhtGaHeCQaRubr1YfKWeRV6ZQ5LoiHVVMyeACaEfiLM4BvLRGYT34uB7TQPcXtM-_pt-9m4M4zQ8a65YjeW-kWZeqZLHdkWNhpK3WpZ--5qTBLhm9I0aw8oKT-vlIOvbiPc-cLitX150-pkSix-WJv7M9mGCqzMMSFa52-VRk9onptOgZeZWlKc5JofKZS28JBqgQaAUtPHBhKJXidvB7on_8EJb7U0fXFm4geAFsB1CqPjjtFMmk1DYcbiQ0N-Xr-hvs7KIjM8qU8OJkijp98r-kZXtp5X2vDfguTU7oc2lG_GHP_nGvZFlbSifEaWGP7OfQWFTu59UUvqZtWBiRWBq0SiPq6MPw');
 
 
-// const CLOUD_CONVERT_APIKEY="eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiZjQ2NzI2MjQwOGQ1NThjNDI5OWVjZjZmM2NkYzIzM2FhOTMxNjlmNWZhYmM5OTY5NmEwMzA0NWFkNTUzOWNkNDJhZjM2NTdhOGJkZGVhZDgiLCJpYXQiOjE3NDY5NDY1MjUuNTE5ODA5LCJuYmYiOjE3NDY5NDY1MjUuNTE5ODEyLCJleHAiOjQ5MDI2MjAxMjUuNTE2MDc2LCJzdWIiOiI2ODIyNjM1MSIsInNjb3BlcyI6WyJ1c2VyLnJlYWQiLCJ1c2VyLndyaXRlIiwidGFzay5yZWFkIiwidGFzay53cml0ZSIsIndlYmhvb2sucmVhZCIsIndlYmhvb2sud3JpdGUiLCJwcmVzZXQucmVhZCIsInByZXNldC53cml0ZSJdfQ.pQYXRy7-5Nl_qZ_CnKyAMupdvCLoRyIzv8QQHcq-8nUXXxUXXDrXkaO-bj-1WKmYzLrFTb7TR6oVHBBt57cGdZJ0MplYgptzu116MFMQYmMrfSyNYibKHGWTKRHndBaOP3ag7fs_au5vQtZJLcnzixN2fDHPGCMq8lIeX-0iPDabhEqrx2JioUPORAdYLYaFTdIhCU2aWjznjTisUeB0rFGfNZzJKM92nWuFeHu61oYifPDZUxrLPeDqpO7URncuC_9uZfD-BrmIsirvKYdPg-htKaPDc0h5F1_6e7L1FhCRxlgJ0pl3EVk0s2vgDDgjLIo_VeD7mduhtGaHeCQaRubr1YfKWeRV6ZQ5LoiHVVMyeACaEfiLM4BvLRGYT34uB7TQPcXtM-_pt-9m4M4zQ8a65YjeW-kWZeqZLHdkWNhpK3WpZ--5qTBLhm9I0aw8oKT-vlIOvbiPc-cLitX150-pkSix-WJv7M9mGCqzMMSFa52-VRk9onptOgZeZWlKc5JofKZS28JBqgQaAUtPHBhKJXidvB7on_8EJb7U0fXFm4geAFsB1CqPjjtFMmk1DYcbiQ0N-Xr-hvs7KIjM8qU8OJkijp98r-kZXtp5X2vDfguTU7oc2lG_GHP_nGvZFlbSifEaWGP7OfQWFTu59UUvqZtWBiRWBq0SiPq6MPw";
 
 app.use(cors({origin: 'https://file-switch-gamma.vercel.app'}));
+
+
+
 const port= process.env.PORT||3001;
 const fs = require('fs');
 require('dotenv').config();
@@ -30,18 +29,19 @@ const FormData = require("form-data");
 
    
     const storage = multer.diskStorage({
-        limits: { fileSize: 2 * 1024 * 1024 },
+      
         destination: "uploads",
         filename: (req, file, cb) => {
-          cb(null, file.originalname);  // Keep the original filename
+              const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const ext = path.extname(file.originalname);
+    cb(null, uniqueSuffix + ext);
         }
       });
       
 
-      const uploads=multer({storage:storage});
+      const uploads=multer({storage:storage,  limits: { fileSize: 5 * 1024 * 1024 }  });
 
      
-
  app.post('/convertFile/docx-to-pdf', uploads.single('file'), async(req,res,next)=>{
         try{
         if(!req.file){
@@ -343,9 +343,6 @@ app.post('/convertFile/jpg-to-png', uploads.single('file'), async(req,res,next)=
 }
 });
 
-
-
-
 app.post("/convertFile/png-to-docx", uploads.single("file"), async (req, res) => {
     try {
         if (!req.file) {
@@ -398,6 +395,8 @@ app.post("/convertFile/png-to-docx", uploads.single("file"), async (req, res) =>
 });
 
 
+
+
 app.post('/convertFile/png-to-pdf', uploads.single('file'), async(req,res,next)=>{
     try{
     if(!req.file){
@@ -420,10 +419,9 @@ app.post('/convertFile/png-to-pdf', uploads.single('file'), async(req,res,next)=
         console.log("file downloaded");
         cleanFolder("uploads"); 
      })
-     
-}catch(err){
+   }catch(err){
     console.log("error occurred",err);
-}
+}  
 })
 
 app.post('/convertFile/png-to-jpg', uploads.single('file'), async(req,res,next)=>{
