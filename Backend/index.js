@@ -343,56 +343,8 @@ app.post('/convertFile/jpg-to-png', uploads.single('file'), async(req,res,next)=
 }
 });
 
-// app.post("/convertFile/png-to-docx", uploads.single("file"), async (req, res) => {
-//     try {
-//         if (!req.file) {
-//             return res.status(400).json({ message: "No file uploaded" });
-//         }
-
-//         const pngPath = req.file.path; // Path to uploaded PNG
-//         const outputDir = path.join(__dirname, "converted");
-
-//         if (!fs.existsSync(outputDir)) {
-//             fs.mkdirSync(outputDir);
-//         }
-//         //   const { name } = path.parse(pngPath);  // finding name using destructuring the 'path' object
-//          const name=path.parse(pngPath).name;  // finding name by extracting name from path object 
-//         const outputDocxPath = path.join(outputDir, `${name}.docx`);
-       
-
-//         // Read the image into a buffer
-//         const imageBuffer = fs.readFileSync(pngPath);
-
-//         // Create a new Aspose.Words Document
-//         const doc = new aw.Document();
-//         const builder = new aw.DocumentBuilder(doc);
-
-//         // 🔹 Fix: Insert image **directly** from buffer (No Base64 conversion needed)
-//         builder.insertImage(imageBuffer);
-
-//         // Save the document as DOCX
-//         await doc.save(outputDocxPath);
-
-//         // Send the converted file as a response
-//         res.download(outputDocxPath, "converted.docx", (err) => {
-//             if (err) console.error("Error sending file:", err);
-//         });
-
-//         // Cleanup: Delete files **after response is sent**
-//         res.on("finish",   () => {
-//              fs.unlinkSync(pngPath);
-//              fs.unlinkSync(outputDocxPath);
-//             console.log("Temporary files deleted.");
-//         });
 
 
-//         // await cleanupFiles([pngPath, outputDocxPath]); //  Another way Cleanup temp files
-
-//     } catch (error) {
-//         console.error("Error converting PNG to DOCX:", error);
-//         res.status(500).json({ error: "Internal Server Error" });
-//     }
-// });
 
 
 app.post("/convertFile/png-to-docx", uploads.single("file"), async (req, res) => {
