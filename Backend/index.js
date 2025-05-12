@@ -39,7 +39,7 @@ const FormData = require("form-data");
       });
       
 
-      const uploads=multer({storage:storage,  limits: { fileSize: 5 * 1024 * 1024 }  });
+      const uploads=multer({storage:storage,  limits: { fileSize: 25 * 1024 * 1024 }  });
 
      
  app.post('/convertFile/docx-to-pdf', uploads.single('file'), async(req,res,next)=>{
